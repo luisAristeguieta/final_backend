@@ -1,0 +1,24 @@
+# Eclipse
+.metadata/
+.settings/
+.classpath
+.project
+.factorypath
+
+# Spring Boot
+target/
+*.log
+*.tmp
+
+# IDE específicos
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Archivos del sistema
+Thumbs.db
+desktop.ini
+
+# Otros
+.vscode/
