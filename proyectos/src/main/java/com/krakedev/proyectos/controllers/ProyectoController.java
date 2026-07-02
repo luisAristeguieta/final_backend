@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.krakedev.proyectos.entidades.Proyecto;
+import com.krakedev.proyectos.repositories.ProyectoRepository;
 import com.krakedev.proyectos.services.ProyectoService;
 
 @RestController
@@ -22,9 +23,11 @@ import com.krakedev.proyectos.services.ProyectoService;
 public class ProyectoController {
 
     private final ProyectoService servicio;
+    private final ProyectoRepository proyectoRepository;
 
-    public ProyectoController(ProyectoService servicio) {
+    public ProyectoController(ProyectoService servicio, ProyectoRepository proyectoRepository) {
         this.servicio = servicio;
+        this.proyectoRepository = proyectoRepository;
     }
 
  // Solo ADMIN puede crear proyectos
@@ -93,6 +96,16 @@ public class ProyectoController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error al eliminar proyecto");
+        }
+    }
+    
+    @GetMapping("/publico/resumen")
+    public ResponseEntity<Long> obtenerResumenProyectos() {
+        try {
+            long totalProyectos = proyectoRepository.count();
+            return ResponseEntity.ok(totalProyectos);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(0L);
         }
     }
 }

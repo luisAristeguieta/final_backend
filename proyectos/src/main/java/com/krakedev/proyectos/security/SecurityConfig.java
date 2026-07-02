@@ -1,16 +1,21 @@
 package com.krakedev.proyectos.security;
 
+import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 // Centro de Control de Seguridad (Configuración). Su función principal es definir las reglas del juego para 
 // toda tu aplicación web: establece qué endpoints son públicos, cuáles son privados y cómo se procesa la seguridad
-
 
 @Configuration
 @EnableMethodSecurity
@@ -26,17 +31,33 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		return http
-				// Deshabilitar CSRF (API stateless)
+				.cors(Customizer.withDefaults())
 				.csrf(csrf -> csrf.disable())
-				// Configurar política de sesiones STATELESS
 				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				// Configurar reglas de autorización
 				.authorizeHttpRequests(auth -> auth
-						// Endpoints públicos (registro y login)
 						.requestMatchers("/api/auth/registrar", "/api/auth/login").permitAll()
-						// Cualquier otra petición requiere autenticación
-						.anyRequest().authenticated())
-				// Agregar filtro JWT antes del filtro por defecto
-				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class).build();
+						.requestMatchers("/proyectos/publico/resumen").permitAll()
+						.anyRequest().authenticated()
+				)
+				.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+				.build();
+	}
+// agregado para que pueda abrir en el puerto en react sin bloqueo: 
+	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+		CorsConfiguration configuration = new CorsConfiguration();
+
+		configuration.setAllowedOrigins(List.of("http://localhost:5173"));
+
+		configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+
+		configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+
+		configuration.setAllowCredentials(true);
+
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", configuration);
+
+		return source;
 	}
 }
