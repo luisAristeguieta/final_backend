@@ -30,6 +30,9 @@ public class Tarea {
 
 	@Column(nullable = false)
 	private double costoEstimado;
+	
+	@Column(nullable = false, length = 10)
+	private String prioridad;
 
 	@ManyToOne
 	@JoinColumn(name = "proyecto_id", nullable = false)
@@ -41,18 +44,28 @@ public class Tarea {
 	private List<Empleado> empleados;
 
 	public Tarea() {
-		super();
 	}
 
-	public Tarea(String descripcion, LocalDate fechaLimite, double costoEstimado, Proyecto proyecto) {
+	public Tarea(String descripcion, LocalDate fechaLimite, double costoEstimado, String prioridad,
+			Proyecto proyecto, List<Empleado> empleados) {
 		this.descripcion = descripcion;
 		this.fechaLimite = fechaLimite;
 		this.costoEstimado = costoEstimado;
+		this.prioridad = prioridad;
 		this.proyecto = proyecto;
+		this.empleados = empleados;
 	}
 
 	public int getId() {
 		return id;
+	}
+
+	public String getPrioridad() {
+		return prioridad;
+	}
+
+	public void setPrioridad(String prioridad) {
+		this.prioridad = prioridad;
 	}
 
 	public void setId(int id) {

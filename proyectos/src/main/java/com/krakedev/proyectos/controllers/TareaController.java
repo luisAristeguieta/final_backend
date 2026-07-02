@@ -1,6 +1,7 @@
 package com.krakedev.proyectos.controllers;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +35,9 @@ public class TareaController {
         try {
             Tarea nueva = servicio.guardar(tarea);
             return ResponseEntity.status(HttpStatus.CREATED).body(nueva);
+        } catch (IllegalArgumentException e) {
+    			// Retorno requerido: HTTP 400 Bad Request con JSON {"error": "Prioridad no válida"}
+    			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {

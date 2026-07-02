@@ -1,6 +1,7 @@
 package com.krakedev.proyectos.services;
 
 import java.util.ArrayList;
+import java.util.Set;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -18,6 +19,8 @@ public class TareaService {
 	private final TareaRepository tareaRepository;
 	private final ProyectoRepository proyectoRepository;
 	private final EmpleadoRepository empleadoRepository;
+	
+	private static final Set<String> PRIORIDADES_VALIDAS = Set.of("ALTA", "MEDIA", "BAJA");
 
 	public TareaService(TareaRepository tareaRepository, ProyectoRepository proyectoRepository,
 			EmpleadoRepository empleadoRepository) {
@@ -31,6 +34,10 @@ public class TareaService {
 		if (tarea == null) {
 			throw new RuntimeException("La tarea no puede ser nula");
 		}
+		
+		if (tarea.getPrioridad() == null || !PRIORIDADES_VALIDAS.contains(tarea.getPrioridad().toUpperCase())) {
+			throw new IllegalArgumentException("Prioridad no válida");
+		}
 
 		// Buscar y validar existencias con mettodos internos
 		Proyecto proyecto = buscarProyecto(tarea.getProyecto());
@@ -38,6 +45,7 @@ public class TareaService {
 
 		tarea.setProyecto(proyecto);
 		tarea.setEmpleados(empleadosValidos);
+		tarea.setPrioridad(tarea.getPrioridad().toUpperCase());
 
 		return tareaRepository.save(tarea);
 	}
