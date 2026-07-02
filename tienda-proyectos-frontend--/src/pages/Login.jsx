@@ -76,9 +76,6 @@ function Login() {
 
                     <button type="submit" className="btn-primary">Ingresar</button>
                 </form>
-                <div className="auth-footer">
-                    <p>¿No tienes una cuenta? <Link to="/register">Regístrate aquí</Link></p>
-                </div>
             </div>
         </div>
     );
